@@ -159,7 +159,7 @@ services:
       - WORDPRESS_DB_NAME=wordpress
     volumes:
       ## Modify the wordpress site, do not modify /var/www/html
-      - wp_site3:/var/www/html
+      - ./wp/site3:/var/www/html:rw
     networks:
       - app-network
   db_site3:
@@ -198,9 +198,491 @@ services:
       PMA_HOST: db_site3
       PMA_PORT: 3306
       PMA_ARBITRARY: 1
+      UPLOAD_LIMIT: 300M
     depends_on:
       ## Enter DB container name for the site ##
       - db_site3
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  #### Site 4, wp = wordpress, db = database, pma = phpmyadmin
+  wp_site4:
+    logging:
+      options:
+        max-size: "5m"
+        max-file: "3"
+    depends_on:
+      ## Enter DB container name for the site ##
+      - db_site4
+    image: wordpress:5.9.0-fpm-alpine
+    ## Unique container name
+    container_name: wp_site4
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      ## Modify the DB Host for each site ##
+      - WORDPRESS_DB_HOST=db_site4:3306
+      - WORDPRESS_DB_USER=$MYSQL_USER
+      - WORDPRESS_DB_PASSWORD=$MYSQL_PASSWORD
+      - WORDPRESS_DB_NAME=wordpress
+    volumes:
+      ## Modify the wordpress site, do not modify /var/www/html
+      - ./wp/site4:/var/www/html:rw
+      #- wp_site4:/var/www/html
+
+    networks:
+      - app-network
+  db_site4:
+    logging:
+      options:
+        max-size: "5m"
+        max-file: "3"
+    image: mysql:8.0-oracle
+    ## Unique container name
+    container_name: db_site4
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      - MYSQL_DATABASE=wordpress
+    volumes:
+      - dbdata_site4:/var/lib/mysql
+    command: '--default-authentication-plugin=mysql_native_password'
+    networks:
+      - app-network
+  #### PhpMyAdmin Service (optional)
+  pma_site4:
+    logging:
+      options:
+        max-size: "5m"
+        max-file: "3"
+    image: phpmyadmin:5
+    ## Enter unique container name
+    container_name: pma_site4
+    links:
+      ## Enter DB container name for the site ##
+      - db_site4
+    ports:
+      - 8004:80
+    environment:
+      ## Enter DB container name for the site ##
+      PMA_HOST: db_site4
+      PMA_PORT: 3306
+      PMA_ARBITRARY: 1
+      UPLOAD_LIMIT: 300M
+    depends_on:
+      ## Enter DB container name for the site ##
+      - db_site4
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  #### Site 5, wp = wordpress, db = database, pma = phpmyadmin
+  wp_site5:
+    logging:
+      options:
+        max-size: "5m"
+        max-file: "3"
+    depends_on:
+      ## Enter DB container name for the site ##
+      - db_site5
+    image: wordpress:5.9.0-fpm-alpine
+    ## Unique container name
+    container_name: wp_site5
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      ## Modify the DB Host for each site ##
+      - WORDPRESS_DB_HOST=db_site5:3306
+      - WORDPRESS_DB_USER=$MYSQL_USER
+      - WORDPRESS_DB_PASSWORD=$MYSQL_PASSWORD
+      - WORDPRESS_DB_NAME=wordpress
+    volumes:
+      ## Modify the wordpress site, do not modify /var/www/html
+      - wp_site5:/var/www/html
+    networks:
+      - app-network
+  db_site5:
+    logging:
+      options:
+        max-size: "5m"
+        max-file: "3"
+    image: mysql:8.0-oracle
+    ## Unique container name
+    container_name: db_site5
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      - MYSQL_DATABASE=wordpress
+    volumes:
+      - dbdata_site5:/var/lib/mysql
+    command: '--default-authentication-plugin=mysql_native_password'
+    networks:
+      - app-network
+  #### PhpMyAdmin Service (optional)
+  pma_site5:
+    logging:
+      options:
+        max-size: "5m"
+        max-file: "3"
+    image: phpmyadmin:5
+    ## Enter unique container name
+    container_name: pma_site5
+    links:
+      ## Enter DB container name for the site ##
+      - db_site5
+    ports:
+      - 8005:80
+    environment:
+      ## Enter DB container name for the site ##
+      PMA_HOST: db_site5
+      PMA_PORT: 3306
+      PMA_ARBITRARY: 1
+    depends_on:
+      ## Enter DB container name for the site ##
+      - db_site5
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  #### Site 6, wp = wordpress, db = database, pma = phpmyadmin
+  wp_site6:
+    logging:
+      options:
+        max-size: "5m"
+        max-file: "3"
+    depends_on:
+      ## Enter DB container name for the site ##
+      - db_site6
+    image: wordpress:5.9.0-fpm-alpine
+    ## Unique container name
+    container_name: wp_site6
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      ## Modify the DB Host for each site ##
+      - WORDPRESS_DB_HOST=db_site6:3306
+      - WORDPRESS_DB_USER=$MYSQL_USER
+      - WORDPRESS_DB_PASSWORD=$MYSQL_PASSWORD
+      - WORDPRESS_DB_NAME=wordpress
+    volumes:
+      ## Modify the wordpress site, do not modify /var/www/html
+      - ./wp/site6/wp-config.php:/var/www/html/wp-config.php:rw
+      #- wp_site6:/var/www/html
+      - ./php-conf/uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
+    networks:
+      - app-network
+  db_site6:
+    logging:
+      options:
+        max-size: "5m"
+        max-file: "3"
+    image: mysql:8.0-oracle
+    ## Unique container name
+    container_name: db_site6
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      - MYSQL_DATABASE=wordpress
+    volumes:
+      - dbdata_site6:/var/lib/mysql
+    command: '--default-authentication-plugin=mysql_native_password'
+    networks:
+      - app-network
+  #### PhpMyAdmin Service (optional)
+  pma_site6:
+    logging:
+      options:
+        max-size: "5m"
+        max-file: "3"
+    image: phpmyadmin:5
+    ## Enter unique container name
+    container_name: pma_site6
+    links:
+      ## Enter DB container name for the site ##
+      - db_site6
+    ports:
+      - 8006:80
+    environment:
+      ## Enter DB container name for the site ##
+      PMA_HOST: db_site6
+      PMA_PORT: 3306
+      PMA_ARBITRARY: 1
+    depends_on:
+      ## Enter DB container name for the site ##
+      - db_site6
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  #### Site 7, wp = wordpress, db = database, pma = phpmyadmin
+  wp_site7:
+    logging:
+      options:
+        max-size: "5m"
+        max-file: "3"
+    depends_on:
+      ## Enter DB container name for the site ##
+      - db_site7
+    image: wordpress:5.9.0-fpm-alpine
+    ## Unique container name
+    container_name: wp_site7
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      ## Modify the DB Host for each site ##
+      - WORDPRESS_DB_HOST=db_site7:3306
+      - WORDPRESS_DB_USER=$MYSQL_USER
+      - WORDPRESS_DB_PASSWORD=$MYSQL_PASSWORD
+      - WORDPRESS_DB_NAME=wordpress
+    volumes:
+      ## Modify the wordpress site, do not modify /var/www/html
+      - wp_site7:/var/www/html
+    networks:
+      - app-network
+  db_site7:
+    logging:
+      options:
+        max-size: "5m"
+        max-file: "3"
+    image: mysql:8.0-oracle
+    ## Unique container name
+    container_name: db_site7
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      - MYSQL_DATABASE=wordpress
+    volumes:
+      - dbdata_site7:/var/lib/mysql
+    command: '--default-authentication-plugin=mysql_native_password'
+    networks:
+      - app-network
+  #### PhpMyAdmin Service (optional)
+  pma_site7:
+    logging:
+      options:
+        max-size: "5m"
+        max-file: "3"
+    image: phpmyadmin:5
+    ## Enter unique container name
+    container_name: pma_site7
+    links:
+      ## Enter DB container name for the site ##
+      - db_site7
+    ports:
+      - 8007:80
+    environment:
+      ## Enter DB container name for the site ##
+      PMA_HOST: db_site7
+      PMA_PORT: 3306
+      PMA_ARBITRARY: 1
+    depends_on:
+      ## Enter DB container name for the site ##
+      - db_site7
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  #### Site 8, wp = wordpress, db = database, pma = phpmyadmin
+  wp_site8:
+    logging:
+      options:
+        max-size: "5m"
+        max-file: "3"
+    depends_on:
+      ## Enter DB container name for the site ##
+      - db_site8
+    image: wordpress:5.9.0-fpm-alpine
+    ## Unique container name
+    container_name: wp_site8
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      ## Modify the DB Host for each site ##
+      - WORDPRESS_DB_HOST=db_site8:3306
+      - WORDPRESS_DB_USER=$MYSQL_USER
+      - WORDPRESS_DB_PASSWORD=$MYSQL_PASSWORD
+      - WORDPRESS_DB_NAME=wordpress
+    volumes:
+      ## Modify the wordpress site, do not modify /var/www/html
+      - wp_site8:/var/www/html
+    networks:
+      - app-network
+  db_site8:
+    logging:
+      options:
+        max-size: "5m"
+        max-file: "3"
+    image: mysql:8.0-oracle
+    ## Unique container name
+    container_name: db_site8
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      - MYSQL_DATABASE=wordpress
+    volumes:
+      - dbdata_site8:/var/lib/mysql
+    command: '--default-authentication-plugin=mysql_native_password'
+    networks:
+      - app-network
+  #### PhpMyAdmin Service (optional)
+  pma_site8:
+    logging:
+      options:
+        max-size: "5m"
+        max-file: "3"
+    image: phpmyadmin:5
+    ## Enter unique container name
+    container_name: pma_site8
+    links:
+      ## Enter DB container name for the site ##
+      - db_site8
+    ports:
+      - 8008:80
+    environment:
+      ## Enter DB container name for the site ##
+      PMA_HOST: db_site8
+      PMA_PORT: 3306
+      PMA_ARBITRARY: 1
+    depends_on:
+      ## Enter DB container name for the site ##
+      - db_site8
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  #### Site 9, wp = wordpress, db = database, pma = phpmyadmin
+  wp_site9:
+    logging:
+      options:
+        max-size: "5m"
+        max-file: "3"
+    depends_on:
+      ## Enter DB container name for the site ##
+      - db_site9
+    image: wordpress:5.9.0-fpm-alpine
+    ## Unique container name
+    container_name: wp_site9
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      ## Modify the DB Host for each site ##
+      - WORDPRESS_DB_HOST=db_site9:3306
+      - WORDPRESS_DB_USER=$MYSQL_USER
+      - WORDPRESS_DB_PASSWORD=$MYSQL_PASSWORD
+      - WORDPRESS_DB_NAME=wordpress
+    volumes:
+      ## Modify the wordpress site, do not modify /var/www/html
+      - wp_site9:/var/www/html
+    networks:
+      - app-network
+  db_site9:
+    logging:
+      options:
+        max-size: "5m"
+        max-file: "3"
+    image: mysql:8.0-oracle
+    ## Unique container name
+    container_name: db_site9
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      - MYSQL_DATABASE=wordpress
+    volumes:
+      - dbdata_site9:/var/lib/mysql
+    command: '--default-authentication-plugin=mysql_native_password'
+    networks:
+      - app-network
+  #### PhpMyAdmin Service (optional)
+  pma_site9:
+    logging:
+      options:
+        max-size: "5m"
+        max-file: "3"
+    image: phpmyadmin:5
+    ## Enter unique container name
+    container_name: pma_site9
+    links:
+      ## Enter DB container name for the site ##
+      - db_site9
+    ports:
+      - 8009:80
+    environment:
+      ## Enter DB container name for the site ##
+      PMA_HOST: db_site9
+      PMA_PORT: 3306
+      PMA_ARBITRARY: 1
+    depends_on:
+      ## Enter DB container name for the site ##
+      - db_site9
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  #### Site 10, wp = wordpress, db = database, pma = phpmyadmin
+  wp_site10:
+    logging:
+      options:
+        max-size: "5m"
+        max-file: "3"
+    depends_on:
+      ## Enter DB container name for the site ##
+      - db_site10
+    image: wordpress:5.9.0-fpm-alpine
+    ## Unique container name
+    container_name: wp_site10
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      ## Modify the DB Host for each site ##
+      - WORDPRESS_DB_HOST=db_site10:3306
+      - WORDPRESS_DB_USER=$MYSQL_USER
+      - WORDPRESS_DB_PASSWORD=$MYSQL_PASSWORD
+      - WORDPRESS_DB_NAME=wordpress
+    volumes:
+      ## Modify the wordpress site, do not modify /var/www/html
+      - wp_site10:/var/www/html
+    networks:
+      - app-network
+  db_site10:
+    logging:
+      options:
+        max-size: "5m"
+        max-file: "3"
+    image: mysql:8.0-oracle
+    ## Unique container name
+    container_name: db_site10
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      - MYSQL_DATABASE=wordpress
+    volumes:
+      - dbdata_site10:/var/lib/mysql
+    command: '--default-authentication-plugin=mysql_native_password'
+    networks:
+      - app-network
+  #### PhpMyAdmin Service (optional)
+  pma_site10:
+    logging:
+      options:
+        max-size: "5m"
+        max-file: "3"
+    image: phpmyadmin:5
+    ## Enter unique container name
+    container_name: pma_site10
+    links:
+      ## Enter DB container name for the site ##
+      - db_site10
+    ports:
+      - 8010:80
+    environment:
+      ## Enter DB container name for the site ##
+      PMA_HOST: db_site10
+      PMA_PORT: 3306
+      PMA_ARBITRARY: 1
+    depends_on:
+      ## Enter DB container name for the site ##
+      - db_site10
     networks:
       - app-network
     restart: unless-stopped
@@ -216,6 +698,13 @@ services:
       - wp_site1
       - wp_site2
       - wp_site3
+      - wp_site4
+      - wp_site5
+      - wp_site6
+      - wp_site7
+      - wp_site8
+      - wp_site9
+      - wp_site10
     image: nginx:1.21.6-alpine
     container_name: nginx
     restart: unless-stopped
@@ -226,10 +715,17 @@ services:
       ## Enter Wordpress volume here ##
       - wp_site1:/srv/site1
       - wp_site2:/srv/site2
-      - wp_site3:/srv/site3
+      - ./wp/site3:/srv/site3:rw
+      - ./wp/site4:/srv/site4:rw
+      - wp_site5:/srv/site5
+      - ./wp/site6:/srv/site6:rw
+      - wp_site7:/srv/site7
+      - wp_site8:/srv/site8
+      - wp_site9:/srv/site9
+      - wp_site10:/srv/site10
       - ./nginx-conf:/etc/nginx/conf.d
-    #      - certbot_etc:/etc/letsencrypt
-    #      - certbot_var:/var/lib/letsencrypt # not necessary but guard against docker volume prune
+      - certbot_etc:/etc/letsencrypt
+      - certbot_var:/var/lib/letsencrypt # not necessary but guard against docker volume prune
     networks:
       - app-network
 
@@ -245,16 +741,26 @@ services:
 #    command: certonly --webroot --webroot-path=/var/www/html --email sammy@example.com --agree-tos --no-eff-email --force-renewal -d example.com -d www.example.com
 
 volumes:
-  #  certbot_etc:
-  #  certbot_var: 
   ## Enter new sites wordpress and database below
   dbdata_site1:
   wp_site1:
   dbdata_site2:
   wp_site2:
-  dbdata_site3:
-  wp_site3:
-
+  dbdata_site3: #wp_site3:
+  dbdata_site4: #wp_site4:
+  dbdata_site5:
+  wp_site5:
+  dbdata_site6: #wp_site6:
+  dbdata_site7:
+  wp_site7:
+  dbdata_site8:
+  wp_site8:
+  dbdata_site9:
+  wp_site9:
+  dbdata_site10:
+  wp_site10:
+  certbot_etc:
+  certbot_var:
 networks:
   app-network:
     driver: bridge
