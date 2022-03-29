@@ -23,7 +23,8 @@ services:
       - WORDPRESS_DB_NAME=wordpress
     volumes:
       ## Modify the wordpress site, do not modify /var/www/html
-      - wp_site1:/var/www/html
+      - ./wp/site1:/var/www/html:rw
+      - ./php-conf/uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
     networks:
       - app-network
   db_site1:
@@ -91,7 +92,8 @@ services:
       - WORDPRESS_DB_NAME=wordpress
     volumes:
       ## Modify the wordpress site, do not modify /var/www/html
-      - wp_site2:/var/www/html
+      - ./wp/site2:/var/www/html:rw
+      - ./php-conf/uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
     networks:
       - app-network
   db_site2:
@@ -160,6 +162,7 @@ services:
     volumes:
       ## Modify the wordpress site, do not modify /var/www/html
       - ./wp/site3:/var/www/html:rw
+      - ./php-conf/uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
     networks:
       - app-network
   db_site3:
@@ -299,7 +302,9 @@ services:
       - WORDPRESS_DB_NAME=wordpress
     volumes:
       ## Modify the wordpress site, do not modify /var/www/html
-      - wp_site5:/var/www/html
+      - wp_site5:/var/www/html ## Modify the wordpress site, do not modify /var/www/html
+      - ./wp/wp-config.php:/var/www/html/wp-config.php:rw
+      - ./php-conf/uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
     networks:
       - app-network
   db_site5:
@@ -367,8 +372,9 @@ services:
       - WORDPRESS_DB_NAME=wordpress
     volumes:
       ## Modify the wordpress site, do not modify /var/www/html
-      - ./wp/site6/wp-config.php:/var/www/html/wp-config.php:rw
-      #- wp_site6:/var/www/html
+      #- ./wp/site6/wp-config.php:/var/www/html/wp-config.php:rw
+      - ./wp/site6:/var/www/html:rw
+      #- wp_site6:/var/www/html:rw
       - ./php-conf/uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
     networks:
       - app-network
@@ -437,7 +443,10 @@ services:
       - WORDPRESS_DB_NAME=wordpress
     volumes:
       ## Modify the wordpress site, do not modify /var/www/html
-      - wp_site7:/var/www/html
+      #- wp_site7:/var/www/html
+      #- ./wp/wp-config.php:/var/www/html/wp-config.php:rw
+      - ./wp/site7:/var/www/html:rw
+      - ./php-conf/uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
     networks:
       - app-network
   db_site7:
@@ -476,6 +485,7 @@ services:
       PMA_HOST: db_site7
       PMA_PORT: 3306
       PMA_ARBITRARY: 1
+      UPLOAD_LIMIT: 300M
     depends_on:
       ## Enter DB container name for the site ##
       - db_site7
@@ -505,7 +515,10 @@ services:
       - WORDPRESS_DB_NAME=wordpress
     volumes:
       ## Modify the wordpress site, do not modify /var/www/html
-      - wp_site8:/var/www/html
+      #- wp_site8:/var/www/html
+      #- ./wp/wp-config.php:/var/www/html/wp-config.php:rw
+      - ./wp/site8:/var/www/html:rw
+      - ./php-conf/uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
     networks:
       - app-network
   db_site8:
@@ -563,6 +576,7 @@ services:
     image: wordpress:5.9.0-fpm-alpine
     ## Unique container name
     container_name: wp_site9
+    #build: ./wp-conf
     restart: unless-stopped
     env_file: .env
     environment:
@@ -573,7 +587,10 @@ services:
       - WORDPRESS_DB_NAME=wordpress
     volumes:
       ## Modify the wordpress site, do not modify /var/www/html
-      - wp_site9:/var/www/html
+      #- wp_site9:/var/www/html
+      #- ./wp/wp-config.php:/var/www/html/wp-config.php:rw
+      - ./wp/site9:/var/www/html:rw
+      - ./php-conf/uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
     networks:
       - app-network
   db_site9:
@@ -641,7 +658,10 @@ services:
       - WORDPRESS_DB_NAME=wordpress
     volumes:
       ## Modify the wordpress site, do not modify /var/www/html
-      - wp_site10:/var/www/html
+      #- wp_site10:/var/www/html
+      #- ./wp/wp-config.php:/var/www/html/wp-config.php:rw
+      - ./wp/site10:/var/www/html:rw
+      - ./php-conf/uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
     networks:
       - app-network
   db_site10:
@@ -680,6 +700,7 @@ services:
       PMA_HOST: db_site10
       PMA_PORT: 3306
       PMA_ARBITRARY: 1
+      UPLOAD_LIMIT: 300M
     depends_on:
       ## Enter DB container name for the site ##
       - db_site10
@@ -713,16 +734,17 @@ services:
       - "443:443"
     volumes:
       ## Enter Wordpress volume here ##
-      - wp_site1:/srv/site1
-      - wp_site2:/srv/site2
+      #- wp_site1:/srv/site1
+      - ./wp/site1:/srv/site1:rw
+      - ./wp/site2:/srv/site2:rw
       - ./wp/site3:/srv/site3:rw
       - ./wp/site4:/srv/site4:rw
       - wp_site5:/srv/site5
       - ./wp/site6:/srv/site6:rw
-      - wp_site7:/srv/site7
-      - wp_site8:/srv/site8
-      - wp_site9:/srv/site9
-      - wp_site10:/srv/site10
+      - ./wp/site7:/srv/site7:rw
+      - ./wp/site8:/srv/site8:rw
+      - ./wp/site9:/srv/site9:rw
+      - ./wp/site10:/srv/site10:rw
       - ./nginx-conf:/etc/nginx/conf.d
       - certbot_etc:/etc/letsencrypt
       - certbot_var:/var/lib/letsencrypt # not necessary but guard against docker volume prune
@@ -742,23 +764,17 @@ services:
 
 volumes:
   ## Enter new sites wordpress and database below
-  dbdata_site1:
-  wp_site1:
-  dbdata_site2:
-  wp_site2:
+  dbdata_site1: #wp_site1:
+  dbdata_site2: #wp_site2:
   dbdata_site3: #wp_site3:
   dbdata_site4: #wp_site4:
   dbdata_site5:
   wp_site5:
   dbdata_site6: #wp_site6:
-  dbdata_site7:
-  wp_site7:
-  dbdata_site8:
-  wp_site8:
-  dbdata_site9:
-  wp_site9:
-  dbdata_site10:
-  wp_site10:
+  dbdata_site7: #wp_site7:
+  dbdata_site8: #wp_site8:
+  dbdata_site9: #wp_site9:
+  dbdata_site10: #wp_site10:
   certbot_etc:
   certbot_var:
 networks:

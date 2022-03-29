@@ -40,7 +40,7 @@ if (!function_exists('getenv_docker')) {
 }
 // Avoid the plugin FTP issue
 define('FS_METHOD','direct');
-Define(‘WP_TEMP_DIR’, ABSPATH . ‘wp-content/’);
+define('WP_TEMP_DIR', ABSPATH . 'wp-content/');
 
 // ** Database settings - You can get this info from your web host ** //
 /** The name of the database for WordPress */
